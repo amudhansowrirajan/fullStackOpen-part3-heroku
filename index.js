@@ -134,7 +134,7 @@ app.put("/api/persons/:id", (req, res) => {
   const person = {
     name: body.name,
     number: body.number,
-    id: Math.ceil(Math.random() * 999999999),
+    id: id,
   };
 
   persons = persons.filter((perp) => perp.id !== id).concat(person);
