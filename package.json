@@ -7,9 +7,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "rm -rf build && cd ../FullStack-Open/Part-2/phonebook && npm run build --prod && cp -r build ../../../fullStackOpen-part3",
-    "deploy": "git push origin master",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",    
+    "build:ui": "rm -rf build && cd ../FullStack-Open/Part-2/phonebook && npm run build --prod && cp -r build ../../../fullStackOpen-part3", 
     "logs:prod": "heroku logs --tail"
   },
   "author": "Amudhan",
