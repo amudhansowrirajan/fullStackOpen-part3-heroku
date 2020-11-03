@@ -1,0 +1,26 @@
+// 3.1 API - get all persons
+GET http://localhost:3001/api/persons
+
+
+//get info on all persons (aggregate)
+###
+GET http://localhost:3001/info
+
+// Get a particular person based on their ID
+###
+GET http://localhost:3001/api/persons/2
+ 
+// to delete a person based on their ID
+###
+DELETE http://localhost:3001/api/persons/2
+
+
+// to ADD a new person to the list of Persons
+###
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "amudhan",
+  "number": "25434524"
+}
