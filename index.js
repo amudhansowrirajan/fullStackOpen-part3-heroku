@@ -115,6 +115,10 @@ app.delete("/api/persons/:id", (req, res) => {
   res.json(persons);
 });
 
+app.put("/api/persons/:id", (req, res) => {
+  console.log(req.body, req.data);
+});
+
 ///////////////////////////////
 ///////////////////////////////
 ///////////////////////////////
