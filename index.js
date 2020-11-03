@@ -116,7 +116,30 @@ app.delete("/api/persons/:id", (req, res) => {
 });
 
 app.put("/api/persons/:id", (req, res) => {
-  console.log(req.body, req.data);
+  const id = Number(req.params.id);
+  const body = req.body;
+
+  if (!body.name) {
+    return res.status(400).json({
+      error: "please enter a name",
+    });
+  }
+
+  if (!body.number) {
+    return res.status(400).send({
+      error: "please enter a number",
+    });
+  }
+
+  const person = {
+    name: body.name,
+    number: body.number,
+    id: Math.ceil(Math.random() * 999999999),
+  };
+
+  persons = persons.filter((perp) => perp.id !== id).concat(person);
+  console.log(persons);
+  res.json(person);
 });
 
 ///////////////////////////////
