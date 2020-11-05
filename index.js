@@ -146,7 +146,7 @@ app.use(unknownEndPoint);
 const errorHandler = (error, req, res, next) => {
   // console.log(error);
   if (error.name === "CastError") {
-    return res.status(400).json({ error: "malformed id" });
+    return res.status(400).json({ error: "malformed request" });
   } else if (error.name === "ValidationError") {
     console.log("----validation Error----");
     console.log("----validation Error----");
