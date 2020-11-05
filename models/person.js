@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const url = process.env.MONGO_URL;
+const url = process.env.MONGO_URI;
 
 mongoose.connect(url, {
   useNewUrlParser: true,
@@ -10,8 +10,16 @@ mongoose.connect(url, {
 });
 
 const personSchema = new mongoose.Schema({
-  name: String,
-  number: Number,
+  name: {
+    type: String,
+    minlength: 5,
+    required: true,
+  },
+  number: {
+    type: Number,
+    min: 9999,
+    required: true,
+  },
 });
 
 personSchema.set("toJSON", {

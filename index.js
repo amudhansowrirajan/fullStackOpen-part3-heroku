@@ -88,19 +88,6 @@ app.get("/info", (req, res, next) => {
 
 app.post("/api/persons", (req, res, next) => {
   const body = req.body;
-  // console.log(body);
-  // console.log(req.headers);
-  if (!body.name) {
-    return res.status(400).json({
-      error: "please enter a name",
-    });
-  }
-
-  if (!body.number) {
-    return res.status(400).json({
-      error: "please enter a number",
-    });
-  }
 
   if (!Person.find({ name: body.name })) {
     return res.status(400).json({
@@ -132,21 +119,8 @@ app.delete("/api/persons/:id", (req, res, next) => {
 
 app.put("/api/persons/:id", (req, res, next) => {
   const id = req.params.id;
-  const body = req.body;
 
-  if (!body.name) {
-    return res.status(400).json({
-      error: "please enter a name",
-    });
-  }
-
-  if (!body.number) {
-    return res.status(400).send({
-      error: "please enter a number",
-    });
-  }
-
-  Person.findByIdAndUpdate(id, req.body, { new: true })
+  Person.findByIdAndUpdate(id, req.body, { new: true, runValidators: true })
     .then((updatedNote) => {
       res.json(updatedNote);
     })
@@ -172,7 +146,12 @@ app.use(unknownEndPoint);
 const errorHandler = (error, req, res, next) => {
   // console.log(error);
   if (error.name === "CastError") {
-    return res.status(400).send({ error: "malformed id" });
+    return res.status(400).json({ error: "malformed id" });
+  } else if (error.name === "ValidationError") {
+    console.log("----validation Error----");
+    console.log("----validation Error----");
+
+    return res.status(400).json({ error: error.message });
   }
 
   next(error);
