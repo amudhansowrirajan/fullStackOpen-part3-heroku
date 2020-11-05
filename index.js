@@ -1,11 +1,16 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 
+const Person = require("./models/person");
+
 const app = express();
+
 app.use(express.json());
 app.use(cors());
 app.use(express.static("build"));
+
 morgan.token("post", function (req, res) {
   if (req.body.name) {
     return JSON.stringify(req.body);
@@ -13,12 +18,16 @@ morgan.token("post", function (req, res) {
     return null;
   }
 });
-// const logStream = fs.createWriteStream("./morgan.log");
+
 app.use(
   morgan(
-    ":method :url status-:status (:res[content-length]-:response-time ms) :post :user-agent"
+    ":method :url status-:status (:res[content-length]-:response-time ms)\n:post\n:user-agent"
   )
 );
+
+///////////////////////////////
+///////////////////////////////
+///////////////////////////////
 
 let persons = [
   {
@@ -49,32 +58,35 @@ let persons = [
 
 // Routes
 
-app.get("/api/persons", (req, res) => {
-  res.json(persons);
+app.get("/api/persons", (req, res, next) => {
+  Person.find({})
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => next(error));
 });
 
-app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
+app.get("/api/persons/:id", (req, res, next) => {
+  const id = req.params.id;
 
-  if (!persons.map((person) => person.id).includes(id)) {
-    return res.status(400).json({
-      error: "invalid ID or Request",
-    });
-  }
-
-  const person = persons.filter((person) => person.id === id);
-  res.json(person);
+  Person.findById(id)
+    .then((result) => res.json(result))
+    .catch((error) => next(error));
 });
 
-app.get("/info", (req, res) => {
-  res.send(
-    `<h4>Phone book has Info for ${
-      persons.length
-    } people</h4> <p>${new Date().toString()}</p>`
-  );
+app.get("/info", (req, res, next) => {
+  Person.find({})
+    .then((result) => {
+      res.send(
+        `<h4>Phone book has Info for ${
+          result.length
+        } people</h4> <p>${new Date().toString()}</p>`
+      );
+    })
+    .catch((error) => next(error));
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const body = req.body;
   // console.log(body);
   // console.log(req.headers);
@@ -85,38 +97,41 @@ app.post("/api/persons", (req, res) => {
   }
 
   if (!body.number) {
-    return res.status(400).send({
+    return res.status(400).json({
       error: "please enter a number",
     });
   }
 
-  // check if the person already exists
-  if (persons.map((person) => person.name).includes(body.name)) {
-    return res.status(400).send({
-      error: "this person already exists",
+  if (!Person.find({ name: body.name })) {
+    return res.status(400).json({
+      error: "this Person already exists",
     });
   }
 
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number,
-    id: Math.ceil(Math.random() * 999999999),
-  };
+  });
 
-  persons = persons.concat(person);
-  res.json(person);
+  person
+    .save()
+    .then((perp) => res.json(perp))
+    .catch((error) => next(error));
 });
 
-app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  // console.log(id);
-  persons = persons.filter((person) => person.id !== id);
-  // console.log(persons);
-  res.json(persons);
+app.delete("/api/persons/:id", (req, res, next) => {
+  const id = req.params.id;
+
+  Person.findByIdAndRemove(id)
+    .then((result) => res.json(result))
+    .catch((error) => {
+      console.log(error);
+      next(error);
+    });
 });
 
-app.put("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
+app.put("/api/persons/:id", (req, res, next) => {
+  const id = req.params.id;
   const body = req.body;
 
   if (!body.name) {
@@ -131,26 +146,39 @@ app.put("/api/persons/:id", (req, res) => {
     });
   }
 
-  const person = {
-    name: body.name,
-    number: body.number,
-    id: id,
-  };
-
-  persons = persons.filter((perp) => perp.id !== id).concat(person);
-  console.log(persons);
-  res.json(person);
+  Person.findByIdAndUpdate(id, req.body, { new: true })
+    .then((updatedNote) => {
+      res.json(updatedNote);
+    })
+    .catch((error) => next(error));
 });
 
 ///////////////////////////////
 ///////////////////////////////
 ///////////////////////////////
 
-// CATCH ALL
+// CATCH ALL UNKNOWNENDPOINTS (MiddleWare)
 const unknownEndPoint = (req, res) => {
   res.send("<h2>Unknown Endpoint<h2>");
 };
 app.use(unknownEndPoint);
+
+///////////////////////////////
+///////////////////////////////
+///////////////////////////////
+
+// ERROR HANDLING (MiddleWare)
+
+const errorHandler = (error, req, res, next) => {
+  // console.log(error);
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "malformed id" });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
 
 ///////////////////////////////
 ///////////////////////////////
