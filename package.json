@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd ../FullStack-Open/Part-2/phonebook && npm run build --prod && cp -r build ../../../fullStackOpen-part3",
     "logs:prod": "heroku logs --tail",
-    "build:run": "npm run  build:ui && cd ../../../Full-____-unfinished"
+    "lint": "eslint ."
   },
   "author": "Amudhan",
   "license": "ISC",
@@ -22,6 +22,7 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "eslint": "^7.12.1",
     "nodemon": "^2.0.6"
   }
 }
