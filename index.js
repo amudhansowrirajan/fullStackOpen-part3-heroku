@@ -93,7 +93,11 @@ app.delete("/api/persons/:id", (req, res, next) => {
 app.put("/api/persons/:id", (req, res, next) => {
   const id = req.params.id;
 
-  Person.findByIdAndUpdate(id, req.body, { new: true, runValidators: true })
+  Person.findByIdAndUpdate(id, req.body, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  })
     .then((updatedNote) => {
       res.json(updatedNote);
     })
