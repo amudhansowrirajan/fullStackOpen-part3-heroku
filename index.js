@@ -51,7 +51,7 @@ app.get("/info", (req, res, next) => {
   Person.find({})
     .then((result) => {
       res.send(
-        `<h4>Phone book has Info for ${
+        `<h4>Amudhan's Phone book has Info for ${
           result.length
         } people</h4> <p>${new Date().toString()}</p>`
       );
