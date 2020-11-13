@@ -4,11 +4,11 @@ GET http://localhost:3001/api/persons
 
 //get info on all persons (aggregate)
 ###
-GET http://localhost:3001/info
+GET  http://localhost:3001/api/info
 
 // Get a particular person based on their ID
 ###
-GET http://localhost:3001/api/persons/2
+GET http://localhost:3001/api/persons/5fa23b23aea22f4318424d69
  
 // to delete a person based on their ID
 ###
