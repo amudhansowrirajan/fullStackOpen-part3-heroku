@@ -4,7 +4,6 @@ const Person = require("../models/person");
 const logger = require("../utils/logger");
 
 phoneBookRouter.get("/info", (req, res, next) => {
-  console.log("info infoinfoinfoinfoinfoinfoinfoinfoinfoinfoinfoinfoinfo");
   Person.find({})
     .then((result) => {
       res.send(
